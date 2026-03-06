@@ -95,10 +95,10 @@ class GridView: NSView {
             NSGraphicsContext.restoreGraphicsState()
         }
 
-        // Grid lines — 0.5px white at 0.2 alpha
+        // Grid lines — 0.5px accent color at 0.25 alpha
         let gridPath = NSBezierPath()
         gridPath.lineWidth = 0.5
-        NSColor.white.withAlphaComponent(0.2).setStroke()
+        Settings.gridColor.withAlphaComponent(0.25).setStroke()
 
         for col in 0...columns {
             let x = CGFloat(col) * cellW
