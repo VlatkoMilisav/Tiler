@@ -93,7 +93,7 @@ final class SettingsWindowController: NSWindowController {
         let doneBtn = button("Done", action: #selector(done))
         doneBtn.keyEquivalent = "\r"
         let quitBtn = button("Quit Tiler", action: #selector(quitApp))
-        let infoBtn = button("Info…", action: #selector(openAbout))
+        let infoBtn = button("About", action: #selector(openAbout))
 
         accessibilityDot = NSTextField(labelWithString: "●")
         accessibilityDot.font = .systemFont(ofSize: 10)
