@@ -59,16 +59,29 @@ class EventMonitor {
 
         let rmbDown = NSEvent.addGlobalMonitorForEvents(matching: .rightMouseDown) { [weak self] _ in
             guard let self else { return }
-            if Settings.activationModifier == .rightClick, case .dragging = self.state {
+            guard Settings.activationModifier == .rightClick else { return }
+            switch self.state {
+            case .dragging:
                 self.activateGrid()
+            case .gridActive:
+                self.grid.hide()
+                self.state = .dragging
+            case .idle:
+                break
             }
         }
 
         let keyDown = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self else { return }
             guard Settings.activationModifier == .space, event.keyCode == 49 else { return }
-            if case .dragging = self.state {
+            switch self.state {
+            case .dragging:
                 self.activateGrid()
+            case .gridActive:
+                self.grid.hide()
+                self.state = .dragging
+            case .idle:
+                break
             }
         }
 
