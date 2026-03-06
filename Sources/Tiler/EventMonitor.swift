@@ -66,6 +66,7 @@ class EventMonitor {
             case .gridActive:
                 self.grid.hide()
                 self.state = .dragging
+                self.lastMovedFrame = nil
             case .idle:
                 break
             }
@@ -73,13 +74,14 @@ class EventMonitor {
 
         let keyDown = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self else { return }
-            guard Settings.activationModifier == .space, event.keyCode == 49 else { return }
+            guard Settings.activationModifier == .space, event.keyCode == 49, !event.isARepeat else { return }
             switch self.state {
             case .dragging:
                 self.activateGrid()
             case .gridActive:
                 self.grid.hide()
                 self.state = .dragging
+                self.lastMovedFrame = nil
             case .idle:
                 break
             }
