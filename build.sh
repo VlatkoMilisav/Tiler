@@ -37,11 +37,11 @@ rm -f "${DMG_NAME}"
 
 create-dmg \
   --volname "${APP_NAME}" \
-  --background "Resources/dmg-background.png" \
-  --window-size 540 320 \
+  --background "Resources/dmg-background.jpg" \
+  --window-size 600 400 \
   --icon-size 96 \
-  --icon "${APP_BUNDLE}" 150 160 \
-  --app-drop-link 390 160 \
+  --icon "${APP_BUNDLE}" 170 190 \
+  --app-drop-link 430 190 \
   --hide-extension "${APP_BUNDLE}" \
   --no-internet-enable \
   "${DMG_NAME}" \
