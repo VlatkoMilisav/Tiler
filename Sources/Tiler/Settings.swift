@@ -78,7 +78,7 @@ struct Settings {
 
     static var overlayBlur: Double {
         get {
-            guard UserDefaults.standard.object(forKey: "overlayBlur") != nil else { return 0.85 }
+            guard UserDefaults.standard.object(forKey: "overlayBlur") != nil else { return 0 }
             return UserDefaults.standard.double(forKey: "overlayBlur")
         }
         set { UserDefaults.standard.set(newValue, forKey: "overlayBlur") }
@@ -97,7 +97,7 @@ struct Settings {
         get {
             guard let data = UserDefaults.standard.data(forKey: "gridColor"),
                   let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
-            else { return .controlAccentColor }
+            else { return NSColor(calibratedRed: 0, green: 1, blue: 0, alpha: 1) }
             return color
         }
         set {
