@@ -1,0 +1,12 @@
+# Build artifacts
+.build/
+*.app
+
+# macOS
+.DS_Store
+*.bak
+
+# Temporary
+/tmp/
+.\!*
+*.dmg
