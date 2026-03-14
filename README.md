@@ -9,7 +9,7 @@
 
 <br />
 
-<video src="https://github.com/VlatkoMilisav/Tiler/releases/download/v0.2.1/demo.mp4" width="100%" autoplay loop muted playsinline></video>
+<img src="docs/demo.gif" width="100%" />
 
 <br />
 
