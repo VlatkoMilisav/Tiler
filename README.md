@@ -9,7 +9,7 @@
 
 <br />
 
-<img src="docs/demo.gif" width="100%" />
+<video src="docs/demo.mp4" width="100%" autoplay loop muted playsinline></video>
 
 <br />
 
