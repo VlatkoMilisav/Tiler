@@ -136,6 +136,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         return false
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        // Retry event tap creation in case accessibility was just granted.
+        // start() is a no-op if the tap is already running.
+        eventMonitor?.start()
+        SettingsWindowController.shared.refreshAccessibilityStatus()
+    }
+
     @objc private func quit() {
         NSApp.terminate(nil)
     }

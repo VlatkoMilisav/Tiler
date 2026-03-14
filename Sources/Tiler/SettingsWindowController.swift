@@ -169,7 +169,7 @@ final class SettingsWindowController: NSWindowController {
         refreshAccessibilityStatus()
     }
 
-    @objc private func refreshAccessibilityStatus() {
+    @objc func refreshAccessibilityStatus() {
         let granted = AXIsProcessTrusted()
         accessibilityDot.textColor     = granted ? .systemGreen : .systemOrange
         accessibilityLabel.stringValue = granted ? "Accessibility granted" : "Accessibility not granted"
