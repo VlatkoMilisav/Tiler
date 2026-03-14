@@ -9,14 +9,15 @@ final class SettingsWindowController: NSWindowController {
     private var profilePopUp     = NSPopUpButton()
     private var nameField        = NSTextField()
     private var columnsField     = NSTextField()
+    private var columnsStepper   = NSStepper()
     private var rowsField        = NSTextField()
+    private var rowsStepper      = NSStepper()
     private var colorWell            = NSColorWell()
     private var hideIconCheckbox      = NSButton()
     private var launchAtLoginCheckbox = NSButton()
     private var blurSlider           = NSSlider()
     private var addRemoveSeg         = NSSegmentedControl()
     private var triggerPopUp         = NSPopUpButton()
-    private var accessibilityDot        = NSTextField()
     private var accessibilityLabel      = NSTextField()
     private var accessibilityOpenBtn    = NSButton()
     private var accessibilityRefreshBtn = NSButton()
@@ -56,10 +57,28 @@ final class SettingsWindowController: NSWindowController {
 
         profilePopUp.target = self
         profilePopUp.action = #selector(profileSelected)
+        profilePopUp.translatesAutoresizingMaskIntoConstraints = false
+        profilePopUp.widthAnchor.constraint(equalToConstant: 140).isActive = true
 
         nameField    = editableTextField()
         columnsField = numericTextField()
         rowsField    = numericTextField()
+
+        columnsStepper.minValue = 1
+        columnsStepper.maxValue = 100
+        columnsStepper.increment = 1
+        columnsStepper.valueWraps = false
+        columnsStepper.controlSize = .mini
+        columnsStepper.target = self
+        columnsStepper.action = #selector(columnsStepperChanged)
+
+        rowsStepper.minValue = 1
+        rowsStepper.maxValue = 100
+        rowsStepper.increment = 1
+        rowsStepper.valueWraps = false
+        rowsStepper.controlSize = .mini
+        rowsStepper.target = self
+        rowsStepper.action = #selector(rowsStepperChanged)
 
         triggerPopUp.addItems(withTitles: Settings.ActivationModifier.allCases.map(\.title))
         triggerPopUp.selectItem(at: Settings.activationModifier.rawValue)
@@ -102,13 +121,10 @@ final class SettingsWindowController: NSWindowController {
         let quitBtn = button("Quit Tiler", action: #selector(quitApp))
         let infoBtn = button("About", action: #selector(openAbout))
 
-        accessibilityDot = NSTextField(labelWithString: "●")
-        accessibilityDot.font = .systemFont(ofSize: 10)
-
         accessibilityLabel = NSTextField(labelWithString: "")
-        accessibilityLabel.font = .systemFont(ofSize: 12)
+        accessibilityLabel.font = .systemFont(ofSize: 11)
 
-        accessibilityOpenBtn = button("Open Settings", action: #selector(openAccessibilitySettings))
+        accessibilityOpenBtn = button("Settings", action: #selector(openAccessibilitySettings))
         accessibilityOpenBtn.controlSize = .small
 
         accessibilityRefreshBtn = button("↻", action: #selector(refreshAccessibilityStatus as () -> Void))
@@ -121,14 +137,14 @@ final class SettingsWindowController: NSWindowController {
 
         let stack = NSStackView(views: [
             row([label("Profile:"),    profilePopUp, addRemoveSeg]),
-            row([label("Name:"),       nameField]),
-            row([label("Columns:"),    columnsField, label("Rows:"), rowsField]),
+            row([label("Name: "),      nameField]),
+            row([label("Columns:"),    columnsField, columnsStepper, label("Rows:"), rowsField, rowsStepper]),
             row([label("Trigger:"),    triggerPopUp]),
-            row([label("Blur:"),       blurSlider]),
+            row([label("Blur:     "),  blurSlider]),
             row([label("Selection Color:"), colorWell]),
             hideIconCheckbox,
             launchAtLoginCheckbox,
-            row([leadingSpacer(), accessibilityDot, accessibilityLabel, flexSpacer(), accessibilityOpenBtn, accessibilityRefreshBtn]),
+            row([accessibilityLabel, accessibilityOpenBtn, accessibilityRefreshBtn]),
             sep,
             row([quitBtn, flexSpacer(), infoBtn, doneBtn]),
         ])
@@ -149,7 +165,8 @@ final class SettingsWindowController: NSWindowController {
         ])
 
         cv.layoutSubtreeIfNeeded()
-        window?.setContentSize(cv.fittingSize)
+        let fit = cv.fittingSize
+        window?.setContentSize(NSSize(width: fit.width + stack.edgeInsets.right, height: fit.height))
     }
 
     // MARK: - Data helpers
@@ -171,15 +188,17 @@ final class SettingsWindowController: NSWindowController {
 
     @objc func refreshAccessibilityStatus() {
         let granted = AXIsProcessTrusted()
-        accessibilityDot.textColor     = granted ? .systemGreen : .systemOrange
-        accessibilityLabel.stringValue = granted ? "Accessibility granted" : "Accessibility not granted"
-        accessibilityOpenBtn.isHidden  = granted
+        accessibilityLabel.stringValue  = granted ? "Accessibility granted" : "Accessibility not granted"
+        accessibilityLabel.textColor    = granted ? .labelColor : .systemOrange
+        accessibilityOpenBtn.isHidden   = granted
     }
 
     private func fillFields(from profile: GridProfile) {
-        nameField.stringValue     = profile.name
-        columnsField.integerValue = profile.columns
-        rowsField.integerValue    = profile.rows
+        nameField.stringValue      = profile.name
+        columnsField.integerValue  = profile.columns
+        columnsStepper.integerValue = profile.columns
+        rowsField.integerValue     = profile.rows
+        rowsStepper.integerValue   = profile.rows
     }
 
     private func profileFromFields() -> GridProfile {
@@ -226,6 +245,14 @@ final class SettingsWindowController: NSWindowController {
         all[idx] = updated
         Settings.profiles = all
         profilePopUp.item(at: idx)?.title = updated.name
+    }
+
+    @objc private func columnsStepperChanged() {
+        columnsField.integerValue = columnsStepper.integerValue
+    }
+
+    @objc private func rowsStepperChanged() {
+        rowsField.integerValue = rowsStepper.integerValue
     }
 
     @objc private func triggerChanged() {
@@ -318,10 +345,10 @@ final class SettingsWindowController: NSWindowController {
         return v
     }
 
-    private func leadingSpacer() -> NSView {
+    private func fixedSpacer(_ width: CGFloat) -> NSView {
         let v = NSView()
         v.translatesAutoresizingMaskIntoConstraints = false
-        v.widthAnchor.constraint(equalToConstant: 4).isActive = true
+        v.widthAnchor.constraint(equalToConstant: width).isActive = true
         return v
     }
 }
