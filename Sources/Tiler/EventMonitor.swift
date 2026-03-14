@@ -45,6 +45,10 @@ class EventMonitor {
             eventsOfInterest: eventMask,
             callback: { _, type, event, refcon in
                 let monitor = Unmanaged<EventMonitor>.fromOpaque(refcon!).takeUnretainedValue()
+                if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+                    if let tap = monitor.eventTap { CGEvent.tapEnable(tap: tap, enable: true) }
+                    return Unmanaged.passUnretained(event)
+                }
                 monitor.handle(type: type, event: event)
                 return Unmanaged.passUnretained(event)
             },
@@ -55,9 +59,29 @@ class EventMonitor {
         runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
+
+        NotificationCenter.default.addObserver(
+            forName: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.restartIfNeeded()
+        }
+    }
+
+    private func restartIfNeeded() {
+        guard let tap = eventTap else {
+            stop()
+            start()
+            return
+        }
+        if !CGEvent.tapIsEnabled(tap: tap) {
+            CGEvent.tapEnable(tap: tap, enable: true)
+        }
     }
 
     func stop() {
+        NotificationCenter.default.removeObserver(self, name: NSWorkspace.sessionDidBecomeActiveNotification, object: nil)
         if let source = runLoopSource {
             CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .commonModes)
         }

@@ -128,7 +128,7 @@ final class SettingsWindowController: NSWindowController {
             row([label("Selection Color:"), colorWell]),
             hideIconCheckbox,
             launchAtLoginCheckbox,
-            row([accessibilityDot, accessibilityLabel, flexSpacer(), accessibilityOpenBtn, accessibilityRefreshBtn]),
+            row([leadingSpacer(), accessibilityDot, accessibilityLabel, flexSpacer(), accessibilityOpenBtn, accessibilityRefreshBtn]),
             sep,
             row([quitBtn, flexSpacer(), infoBtn, doneBtn]),
         ])
@@ -147,6 +147,9 @@ final class SettingsWindowController: NSWindowController {
             stack.trailingAnchor.constraint(equalTo: cv.trailingAnchor),
             stack.bottomAnchor.constraint(equalTo: cv.bottomAnchor),
         ])
+
+        cv.layoutSubtreeIfNeeded()
+        window?.setContentSize(cv.fittingSize)
     }
 
     // MARK: - Data helpers
@@ -312,6 +315,13 @@ final class SettingsWindowController: NSWindowController {
     private func flexSpacer() -> NSView {
         let v = NSView()
         v.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        return v
+    }
+
+    private func leadingSpacer() -> NSView {
+        let v = NSView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.widthAnchor.constraint(equalToConstant: 4).isActive = true
         return v
     }
 }
