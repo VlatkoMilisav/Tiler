@@ -156,8 +156,7 @@ class EventMonitor {
         case .mouseMoved, .leftMouseDragged:
             guard case .gridActive(let window) = state else { return }
             grid.updateEndCell(at: NSEvent.mouseLocation)
-            guard Settings.liveResize,
-                  !grid.isConstrained,
+            guard !grid.isConstrained,
                   grid.isMultiCellSelection,
                   let win = window,
                   let frame = grid.selectedWindowFrame(),

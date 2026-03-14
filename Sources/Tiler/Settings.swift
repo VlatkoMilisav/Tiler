@@ -91,16 +91,6 @@ struct Settings {
         set { UserDefaults.standard.set(newValue, forKey: "hideMenuBarIcon") }
     }
 
-    // MARK: - Live resize
-
-    static var liveResize: Bool {
-        get {
-            guard UserDefaults.standard.object(forKey: "liveResize") != nil else { return false }
-            return UserDefaults.standard.bool(forKey: "liveResize")
-        }
-        set { UserDefaults.standard.set(newValue, forKey: "liveResize") }
-    }
-
     // MARK: - Grid color
 
     static var gridColor: NSColor {

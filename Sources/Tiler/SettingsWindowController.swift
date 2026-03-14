@@ -11,7 +11,6 @@ final class SettingsWindowController: NSWindowController {
     private var columnsField     = NSTextField()
     private var rowsField        = NSTextField()
     private var colorWell            = NSColorWell()
-    private var liveResizeCheckbox    = NSButton()
     private var hideIconCheckbox      = NSButton()
     private var launchAtLoginCheckbox = NSButton()
     private var blurSlider           = NSSlider()
@@ -79,11 +78,6 @@ final class SettingsWindowController: NSWindowController {
         colorWell.widthAnchor.constraint(equalToConstant: 44).isActive = true
         colorWell.heightAnchor.constraint(equalToConstant: 22).isActive = true
 
-        liveResizeCheckbox = NSButton(
-            checkboxWithTitle: "Live resize",
-            target: self, action: #selector(liveResizeToggled)
-        )
-
         hideIconCheckbox = NSButton(
             checkboxWithTitle: "Hide menu bar icon",
             target: self, action: #selector(hideIconToggled)
@@ -132,7 +126,6 @@ final class SettingsWindowController: NSWindowController {
             row([label("Trigger:"),    triggerPopUp]),
             row([label("Blur:"),       blurSlider]),
             row([label("Selection Color:"), colorWell]),
-            liveResizeCheckbox,
             hideIconCheckbox,
             launchAtLoginCheckbox,
             row([leadingSpacer(), accessibilityDot, accessibilityLabel, flexSpacer(), accessibilityOpenBtn, accessibilityRefreshBtn]),
@@ -171,7 +164,6 @@ final class SettingsWindowController: NSWindowController {
         triggerPopUp.selectItem(at: Settings.activationModifier.rawValue)
         blurSlider.doubleValue = Settings.overlayBlur
         colorWell.color = Settings.gridColor
-        liveResizeCheckbox.state      = Settings.liveResize ? .on : .off
         hideIconCheckbox.state        = Settings.hideMenuBarIcon ? .on : .off
         launchAtLoginCheckbox.state   = SMAppService.mainApp.status == .enabled ? .on : .off
         refreshAccessibilityStatus()
@@ -246,10 +238,6 @@ final class SettingsWindowController: NSWindowController {
 
     @objc private func colorChanged() {
         Settings.gridColor = colorWell.color
-    }
-
-    @objc private func liveResizeToggled() {
-        Settings.liveResize = liveResizeCheckbox.state == .on
     }
 
     @objc private func hideIconToggled() {
