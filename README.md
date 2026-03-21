@@ -1,6 +1,6 @@
 # Tiler
 
-Draw the layout of your windows in the fast, cool manner.
+Draw the layout of your windows in a fast, cool manner.
 
 [![Download](https://img.shields.io/github/v/release/VlatkoMilisav/Tiler?label=Download&style=flat-square)](https://github.com/VlatkoMilisav/Tiler/releases/latest)
 [![macOS](https://img.shields.io/badge/macOS-13%2B-white?style=flat-square&logo=apple)](https://github.com/VlatkoMilisav/Tiler/releases/latest)
