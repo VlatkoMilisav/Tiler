@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiler — macOS window tiling by drawing</title>
+  <meta name="description" content="Draw the layout of your windows in a fast, cool manner. Free and open-source macOS window manager.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #0f1a0f;
+      --border: #1a2e1a;
+      --text: #d0f0d0;
+      --muted: #5a8a5a;
+      --accent: #00ff41;
+      --accent-hover: #33ff66;
+      --glow: rgba(0, 255, 65, 0.15);
+    }
+
+    body {
+      font-family: "IBM Plex Mono", "SF Mono", monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          transparent,
+          transparent 2px,
+          rgba(0, 255, 65, 0.015) 2px,
+          rgba(0, 255, 65, 0.015) 4px
+        );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 48px;
+    }
+
+    .hero h1 {
+      font-family: "VT323", monospace;
+      font-size: 72px;
+      font-weight: 400;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+      margin-bottom: 12px;
+      letter-spacing: 4px;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-family: "IBM Plex Mono", monospace;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 10px var(--glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--glow);
+    }
+
+    /* Demo */
+    .demo {
+      padding: 32px 0 64px;
+    }
+
+    .demo img {
+      width: 100%;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 30px var(--glow);
+    }
+
+    /* Sections */
+    .section {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section h2 {
+      font-family: "VT323", monospace;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--glow);
+      margin-bottom: 24px;
+    }
+
+    .section h2::before {
+      content: "> ";
+      color: var(--muted);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .step-number {
+      font-size: 11px;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .step-number::before {
+      content: "[";
+      color: var(--muted);
+    }
+
+    .step-number::after {
+      content: "]";
+      color: var(--muted);
+    }
+
+    .step-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Install */
+    .install-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .install-option {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .install-option h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .install-option code {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      color: var(--accent);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+    }
+
+    .install-option p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .install-option a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .install-option a:hover {
+      text-shadow: 0 0 8px var(--glow);
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      border-left: 2px solid var(--border);
+      padding: 12px 16px;
+    }
+
+    .note strong {
+      color: var(--text);
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--glow);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .hero { padding: 48px 0 32px; }
+      .hero h1 { font-size: 48px; }
+      .steps { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <section class="hero">
+      <h1>Tiler</h1>
+      <p>Draw the layout of your windows in a fast, cool manner.</p>
+      <div class="badges">
+        <span class="badge">macOS 13+</span>
+        <span class="badge">Free &amp; open source</span>
+      </div>
+      <div class="cta-group">
+        <a href="https://github.com/VlatkoMilisav/Tiler/releases/latest" class="btn btn-primary">Download</a>
+        <a href="https://github.com/VlatkoMilisav/Tiler" class="btn btn-secondary">GitHub</a>
+      </div>
+    </section>
+
+    <section class="demo">
+      <img src="demo.gif" alt="Tiler demo — drag a window, press space, draw a grid area, window snaps into place">
+    </section>
+
+    <section class="section">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-title">Drag</div>
+          <div class="step-desc">Start dragging a window like you usually would</div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-title">Trigger</div>
+          <div class="step-desc">Press Space (or your chosen trigger) — the grid appears</div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-title">Draw</div>
+          <div class="step-desc">Draw the area you want the window to fill</div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-title">Snap</div>
+          <div class="step-desc">Release — the window snaps instantly</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Install</h2>
+      <div class="install-options">
+        <div class="install-option">
+          <h3>Homebrew</h3>
+          <code>brew install VlatkoMilisav/tap/tiler</code>
+        </div>
+        <div class="install-option">
+          <h3>Manual</h3>
+          <p>Download <a href="https://github.com/VlatkoMilisav/Tiler/releases/latest">Tiler.dmg</a>, open it, and drag Tiler into Applications.</p>
+        </div>
+      </div>
+      <div class="note">
+        The app isn't notarized because $99/year for an Apple developer certificate is a scam.
+        macOS will complain — go to <strong>System Settings &rarr; Privacy &amp; Security</strong> and click <strong>"Open Anyway"</strong>.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/VlatkoMilisav/Tiler">GitHub</a>
+        <a href="https://github.com/VlatkoMilisav/Tiler/releases/latest">Releases</a>
+        <a href="https://paypal.me/VlatkoMilisav">Donate</a>
+      </div>
+      <p>Inspired by <a href="http://windowgrid.net/">WindowGrid</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
