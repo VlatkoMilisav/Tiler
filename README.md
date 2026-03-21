@@ -32,7 +32,7 @@ On first launch grant Accessibility access when prompted, or go to:
 System Settings → Privacy & Security → Accessibility → enable Tiler
 ```
 
-> **"Tiler" can't be opened?** macOS may block the app because it isn't from the App Store.
+> **"Tiler" can't be opened?** The app isn't notarized because $99/year for an Apple developer certificate is a scam. macOS will complain.
 > Go to **System Settings → Privacy & Security**, scroll down, and click **"Open Anyway"**.
 
 #### Build from source
