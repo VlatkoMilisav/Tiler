@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tiler — macOS window tiling by drawing</title>
   <meta name="description" content="Draw the layout of your windows in a fast, cool manner. Free and open-source macOS window manager.">
+  <link rel="icon" type="image/png" href="icon.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
@@ -48,6 +49,15 @@
       max-width: 680px;
       margin: 0 auto;
       padding: 0 24px;
+    }
+
+    .hero-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      margin-right: 16px;
+      vertical-align: middle;
+      box-shadow: 0 0 30px var(--glow), 0 0 60px var(--glow);
     }
 
     /* Hero */
@@ -129,6 +139,14 @@
     .btn-secondary:hover {
       border-color: var(--accent);
       box-shadow: 0 0 10px var(--glow);
+    }
+
+    .btn-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      vertical-align: middle;
+      border-radius: 4px;
     }
 
     /* Demo */
@@ -224,14 +242,41 @@
       margin-bottom: 8px;
     }
 
-    .install-option code {
-      display: block;
+    .install-option .code-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-family: "IBM Plex Mono", monospace;
       font-size: 13px;
       color: var(--accent);
       background: var(--bg);
       border: 1px solid var(--border);
       padding: 10px 14px;
+    }
+
+    .install-option .code-block code {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+
+    .copy-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--glow);
     }
 
     .install-option p {
@@ -298,7 +343,7 @@
   <div class="container">
 
     <section class="hero">
-      <h1>Tiler</h1>
+      <h1><img src="icon.png" alt="" class="hero-icon">Tiler</h1>
       <p>Draw the layout of your windows in a fast, cool manner.</p>
       <div class="badges">
         <span class="badge">macOS 13+</span>
@@ -345,7 +390,10 @@
       <div class="install-options">
         <div class="install-option">
           <h3>Homebrew</h3>
-          <code>brew install VlatkoMilisav/tap/tiler</code>
+          <div class="code-block">
+            <code>brew install VlatkoMilisav/tap/tiler</code>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('brew install VlatkoMilisav/tap/tiler').then(()=>{this.textContent='copied';setTimeout(()=>this.textContent='copy',1500)})">copy</button>
+          </div>
         </div>
         <div class="install-option">
           <h3>Manual</h3>
