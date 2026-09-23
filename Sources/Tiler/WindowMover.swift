@@ -21,10 +21,7 @@ struct WindowMover {
         var pid: pid_t = 0
         guard AXUIElementGetPid(el, &pid) == .success else { return nil }
 
-        // AXEnhancedUserInterface makes Firefox (and similar apps) respond to AX
-        // resize/move calls synchronously instead of deferring to Gecko's render loop.
         let app = AXUIElementCreateApplication(pid)
-        AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface" as CFString, true as CFTypeRef)
 
         var focusedWin: AnyObject?
         if AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute as CFString, &focusedWin) == .success,
@@ -50,13 +47,33 @@ struct WindowMover {
 
         var position = CGPoint(x: frame.minX, y: axY)
         var size = CGSize(width: frame.width, height: frame.height)
+        guard let posValue = AXValueCreate(.cgPoint, &position),
+              let sizeValue = AXValueCreate(.cgSize, &size) else { return }
 
-        if let posValue = AXValueCreate(.cgPoint, &position) {
+        withEnhancedUIDisabled(for: window) {
+            // Size → position → size: the first resize keeps the move from being clamped
+            // at the screen edge, the second one fixes any size clamped at the old position.
+            AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
             AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, posValue)
-        }
-        if let sizeValue = AXValueCreate(.cgSize, &size) {
             AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
         }
+    }
+
+    /// With AXEnhancedUserInterface on (set by VoiceOver and some AX clients), apps like
+    /// Firefox and Chromium animate or partially ignore AX frame changes. Turn it off
+    /// for the duration of the move and restore it afterwards.
+    private static func withEnhancedUIDisabled(for window: AXUIElement, _ body: () -> Void) {
+        var pid: pid_t = 0
+        guard AXUIElementGetPid(window, &pid) == .success else { return body() }
+        let app = AXUIElementCreateApplication(pid)
+        let attr = "AXEnhancedUserInterface" as CFString
+
+        var raw: AnyObject?
+        let wasEnabled = AXUIElementCopyAttributeValue(app, attr, &raw) == .success
+            && (raw as? Bool) == true
+        if wasEnabled { AXUIElementSetAttributeValue(app, attr, false as CFTypeRef) }
+        body()
+        if wasEnabled { AXUIElementSetAttributeValue(app, attr, true as CFTypeRef) }
     }
 
     // MARK: - Read minimum size
