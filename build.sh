@@ -8,11 +8,6 @@ APP_BUNDLE="${APP_NAME}.app"
 BINARY_NAME="Tiler"
 INSTALL_PATH="/Applications/${APP_BUNDLE}"
 DMG_NAME="${APP_NAME}.dmg"
-ZIP_NAME="${APP_NAME}.zip"
-
-# --release: skip installing to /Applications and also produce the zip (used by CI)
-RELEASE=false
-[ "$1" = "--release" ] && RELEASE=true
 
 echo "==> Building ${APP_NAME}..."
 swift build -c release
@@ -33,11 +28,9 @@ cp "Resources/AppIcon.icns" "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
 echo "==> Signing app bundle..."
 codesign --force --deep --sign - "${APP_BUNDLE}"
 
-if [ "$RELEASE" = false ]; then
-  echo "==> Installing to ${INSTALL_PATH}..."
-  rm -rf "${INSTALL_PATH}"
-  cp -r "${APP_BUNDLE}" "${INSTALL_PATH}"
-fi
+echo "==> Installing to ${INSTALL_PATH}..."
+rm -rf "${INSTALL_PATH}"
+cp -r "${APP_BUNDLE}" "${INSTALL_PATH}"
 
 echo "==> Creating DMG..."
 rm -f "${DMG_NAME}"
@@ -53,14 +46,6 @@ create-dmg \
   --no-internet-enable \
   "${DMG_NAME}" \
   "${APP_BUNDLE}"
-
-if [ "$RELEASE" = true ]; then
-  echo "==> Creating zip..."
-  rm -f "${ZIP_NAME}"
-  ditto -c -k --keepParent "${APP_BUNDLE}" "${ZIP_NAME}"
-  echo "Done! Built ${DMG_NAME} and ${ZIP_NAME}"
-  exit 0
-fi
 
 echo ""
 echo "Done! Installed to ${INSTALL_PATH}"
