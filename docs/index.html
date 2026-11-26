@@ -3,9 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tiler — macOS window tiling by drawing</title>
-  <meta name="description" content="Draw the layout of your windows in a fast, cool manner. Free and open-source macOS window manager.">
-  <link rel="icon" type="image/png" href="icon.png">
+  <title>Tiler - Free Grid Window Manager for Mac | Snap Windows by Drawing</title>
+  <meta name="description" content="Free, open-source window manager for Mac. Drag a window, press Space, draw a grid area and the window snaps to it. A WindowGrid and Divvy alternative for macOS.">
+  <link rel="canonical" href="https://vlatkomilisav.github.io/Tiler/">
+  <link rel="icon" type="image/png" href="icon-128.png">
+  <link rel="apple-touch-icon" href="icon-128.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vlatkomilisav.github.io/Tiler/">
+  <meta property="og:title" content="Tiler - draw your window layout on macOS">
+  <meta property="og:description" content="Free, open-source window manager for Mac. Drag a window, press Space, draw a grid area and the window snaps to it. A WindowGrid and Divvy alternative for macOS.">
+  <meta property="og:image" content="https://vlatkomilisav.github.io/Tiler/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tiler - draw your window layout on macOS">
+  <meta name="twitter:description" content="Free, open-source window manager for Mac. Drag a window, press Space, draw a grid area and the window snaps to it. A WindowGrid and Divvy alternative for macOS.">
+  <meta name="twitter:image" content="https://vlatkomilisav.github.io/Tiler/og.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tiler",
+    "description": "Free, open-source window manager for Mac. Drag a window, press Space, draw a grid area and the window snaps to it. A WindowGrid and Divvy alternative for macOS.",
+    "url": "https://vlatkomilisav.github.io/Tiler/",
+    "downloadUrl": "https://github.com/VlatkoMilisav/Tiler/releases/latest",
+    "image": "https://vlatkomilisav.github.io/Tiler/og.jpg",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "macOS 13 or later",
+    "softwareVersion": "0.3.1",
+    "license": "https://github.com/VlatkoMilisav/Tiler/blob/main/LICENSE",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Vlatko Milisav", "url": "https://github.com/VlatkoMilisav" }
+  }
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
@@ -154,7 +184,9 @@
       padding: 32px 0 64px;
     }
 
-    .demo img {
+    .demo video {
+      display: block;
+      height: auto;
       width: 100%;
       border: 1px solid var(--border);
       box-shadow: 0 0 30px var(--glow);
@@ -331,6 +363,10 @@
       margin-bottom: 12px;
     }
 
+    .tagline { font-size: 14px; opacity: 0.8; margin-top: 8px; }
+    .faq dt { font-weight: 600; margin-top: 20px; }
+    .faq dd { margin: 4px 0 0; opacity: 0.85; }
+
     @media (max-width: 500px) {
       .hero { padding: 48px 0 32px; }
       .hero h1 { font-size: 48px; }
@@ -343,8 +379,9 @@
   <div class="container">
 
     <section class="hero">
-      <h1><img src="icon.png" alt="" class="hero-icon">Tiler</h1>
+      <h1><img src="icon-128.png" alt="Tiler app icon" class="hero-icon" width="64" height="64">Tiler</h1>
       <p>Draw the layout of your windows in a fast, cool manner.</p>
+      <p class="tagline">A free grid window manager for Mac: snap any window to any part of the screen by drawing it.</p>
       <div class="badges">
         <span class="badge">macOS 13+</span>
         <span class="badge">Free &amp; open source</span>
@@ -356,7 +393,7 @@
     </section>
 
     <section class="demo">
-      <img src="demo.gif" alt="Tiler demo — drag a window, press space, draw a grid area, window snaps into place">
+      <video src="demo.mp4" poster="poster.jpg" autoplay muted loop playsinline width="1280" height="720" aria-label="Tiler demo: drag a window, press Space, draw a grid area, the window snaps into place"></video>
     </section>
 
     <section class="section">
@@ -404,6 +441,22 @@
         The app isn't notarized because $99/year for an Apple developer certificate is a scam.
         macOS will complain — go to <strong>System Settings &rarr; Privacy &amp; Security</strong> and click <strong>"Open Anyway"</strong>.
       </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <dl class="faq">
+        <dt>What is Tiler?</dt>
+        <dd>A free, open-source window manager for macOS. Instead of memorizing keyboard shortcuts or picking from fixed halves and thirds, you draw the area a window should fill on a grid overlay.</dd>
+        <dt>How is it different from Rectangle, Magnet or Divvy?</dt>
+        <dd>Rectangle and Magnet snap to preset positions. Divvy uses a grid but opens from a hotkey in a separate panel. Tiler puts the grid over the screen while you drag the window, so you move and resize in one motion. It is free and open source.</dd>
+        <dt>Is there a WindowGrid for Mac?</dt>
+        <dd>Tiler is a macOS take on WindowGrid for Windows: drag a window, press a key, draw the target cells.</dd>
+        <dt>Which macOS versions are supported?</dt>
+        <dd>macOS 13 Ventura and later. The release build is Apple Silicon only; Intel Macs can build from source.</dd>
+        <dt>Why does it need Accessibility access?</dt>
+        <dd>macOS only lets apps move and resize other apps' windows through the Accessibility API. Tiler does not read window contents. Its only network call is checking GitHub for a newer release.</dd>
+      </dl>
     </section>
 
   </div>
